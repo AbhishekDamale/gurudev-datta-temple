@@ -106,6 +106,17 @@
 .mobile-menu-icon { display: inline-flex; transform: rotate(0deg) scale(1); transition: transform 320ms cubic-bezier(.23, 1, .32, 1); }
 .mobile-menu-icon.is-open { transform: rotate(90deg) scale(1.03); }
 
+.hero-deity-card {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 55px rgba(20, 5, 4, .42), 0 0 32px rgba(226, 185, 103, .12), inset 0 1px 0 rgba(255, 238, 187, .16) !important;
+  will-change: transform;
+  animation: deity-card-float 4.6s ease-in-out infinite;
+}
+@keyframes deity-card-float {
+  0%, 100% { transform: translate3d(0, -4px, 0); }
+  50% { transform: translate3d(0, -12px, 0); }
+}
+
 @media (max-width: 767px) {
   html { scroll-padding-top: 1rem; }
   body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
@@ -152,10 +163,16 @@
   #gallery button { min-height: 150px; }
   #gallery button:first-child { min-height: 250px; }
   .fixed.bottom-5.right-5 { right: 1rem; bottom: 5.8rem; }
+  .hero-deity-card { animation-name: deity-card-float-mobile; }
+}
+
+@keyframes deity-card-float-mobile {
+  0%, 100% { transform: translate3d(0, -2px, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mobile-menu-layer, .mobile-menu-drawer, .mobile-menu-icon { transition: none; }
+  .mobile-menu-layer, .mobile-menu-drawer, .mobile-menu-icon, .hero-deity-card { transition: none; animation: none; }
   .mobile-menu-layer.is-open .mobile-menu-item { animation: none; opacity: 1; transform: none; }
 }
 

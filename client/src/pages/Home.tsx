@@ -267,7 +267,7 @@ export default function Home() {
 
           <div className="relative mx-auto w-full max-w-[520px] lg:justify-self-end">
             <div className="absolute -inset-5 rounded-[2rem] border border-[#dbad57]/20 bg-[#d7a84c]/10 blur-sm" />
-            <div className="relative overflow-hidden rounded-[1.8rem] border border-[#e4c47e]/35 bg-[#260c0b] p-2 shadow-2xl shadow-[#260c0b]/40">
+            <div className="hero-deity-card relative overflow-hidden rounded-[1.8rem] border border-[#e4c47e]/35 bg-[#260c0b] p-2 shadow-2xl shadow-[#260c0b]/40">
               <img src={images.sanctum} alt="स्वयंभू श्री गुरुदेव दत्त मूर्ती" className="aspect-[4/5] w-full rounded-[1.35rem] object-cover object-center" />
               <div className="absolute inset-x-8 bottom-8 rounded-2xl border border-white/20 bg-[#3e1712]/70 p-4 backdrop-blur-md">
                 <p className="font-display text-xl text-[#ffe6a9]"><Bi lang={lang} mr="दर्शनाने मनःशांती" en="A moment of inner peace" /></p>
