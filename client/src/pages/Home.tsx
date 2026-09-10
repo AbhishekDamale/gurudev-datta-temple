@@ -117,6 +117,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuRendered, setMenuRendered] = useState(false);
   const [lightbox, setLightbox] = useState<(typeof galleryItems)[number] | null>(null);
+  const [vachhalaOpen, setVachhalaOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -135,7 +136,7 @@ export default function Home() {
   }, [lang]);
 
   useEffect(() => {
-    if (menuOpen) {
+    if (menuOpen || vachhalaOpen) {
       setMenuRendered(true);
       document.body.style.overflow = "hidden";
       return () => { document.body.style.overflow = ""; };
@@ -143,12 +144,13 @@ export default function Home() {
     document.body.style.overflow = "";
     const timer = window.setTimeout(() => setMenuRendered(false), 380);
     return () => window.clearTimeout(timer);
-  }, [menuOpen]);
+  }, [menuOpen, vachhalaOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setLightbox(null);
       if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") setVachhalaOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -305,13 +307,14 @@ export default function Home() {
           <div className="grid items-start gap-14 lg:grid-cols-[.8fr_1.2fr]">
             <div className="relative lg:sticky lg:top-24">
               <SectionHeading lang={lang} eyebrow={lang === "mr" ? "कथा आणि परंपरा" : "Story & tradition"} title={lang === "mr" ? "स्वयंभू दर्शनाची कथा" : "The story of the divine appearance"} copy={lang === "mr" ? "उंबराच्या सावलीतून दत्तगुरूंचे दर्शन झाल्याची ही पवित्र परंपरा भक्तांच्या श्रद्धेतून पिढ्यान्‌पिढ्या जपली जाते." : "The sacred tradition of Dattaguru appearing beneath the Audumbar tree has been carried through generations by the faith of devotees."} />
-              <div className="flex items-center gap-4 rounded-2xl border border-[#ead9b8] bg-[#fffdf8] p-4 shadow-sm">
+              <button onClick={() => setVachhalaOpen(true)} className="group flex w-full items-center gap-4 rounded-2xl border border-[#ead9b8] bg-[#fffdf8] p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none">
                 <img src={images.portrait} alt="ब्रह्मकुमारी वच्छला आक्का" className="h-16 w-16 rounded-2xl object-cover object-top" />
                 <div>
                   <p className="font-display text-lg text-[#4d1814]"><Bi lang={lang} mr="ब्रह्मकुमारी वच्छला आक्का" en="Brahmakumari Vachhala Akka" /></p>
                   <p className="mt-1 text-xs text-[#8b6b55]"><Bi lang={lang} mr="स्थानाची सेवाभावी परंपरा" en="A devoted voice of the shrine's tradition" /></p>
+                  <p className="mt-2 text-xs font-bold text-[#a56e1f]"><Bi lang={lang} mr="पूर्ण माहिती वाचा →" en="Read full profile →" /></p>
                 </div>
-              </div>
+              </button>
             </div>
             <div className="space-y-5">
               <article className="rounded-3xl border border-[#ead9b8] bg-[#fffdf8] p-7 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-10">
@@ -324,19 +327,6 @@ export default function Home() {
                 <p className="font-display text-2xl leading-relaxed"><Bi lang={lang} mr="जिथे श्रद्धा असते, तिथे दत्तगुरूंची कृपा असते." en="Where there is faith, there is the grace of Dattaguru." /></p>
                 <footer className="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#9b6b32]">Shri Gurudev Datta · <Bi lang={lang} mr="राम कृष्ण हरी" en="Ram Krishna Hari" /></footer>
               </blockquote>
-              <article className="rounded-3xl border border-[#ead9b8] bg-[#fffdf8] p-7 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-10">
-                <div className="mb-5 flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#4d1814] font-display text-lg text-[#e7c47f]">१९६३</span><div><p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><Bi lang={lang} mr="बालपणीचे दर्शन" en="A childhood vision" /></p><h3 className="font-display text-2xl text-[#4d1814]"><Bi lang={lang} mr="वच्छला आक्कांचा अनुभव" en="Vachhala Akka's experience" /></h3></div></div>
-                <p className="text-[15px] leading-8 text-[#6f5444]"><Bi lang={lang} mr="वयाच्या अवघ्या दहाव्या वर्षी, ब्रह्मकुमारी वच्छला आक्का उंबराच्या झाडाजवळ खेळत असताना त्यांना श्री गुरुदेव दत्त लख्ख प्रकाशरूपाने प्रकट झाले, अशी या स्थानाची परंपरागत कथा सांगितली जाते. या दिव्य दर्शनाने त्यांच्या पुढील संपूर्ण आयुष्याला कलाटणी मिळाली." en="According to the shrine's traditional account, at the age of ten, while playing near an Audumbar tree, Brahmakumari Vachhala Akka witnessed Shri Gurudev Datta appear as a radiant form of light. This divine vision transformed the course of her life." /></p>
-              </article>
-              <article className="rounded-3xl border border-[#ead9b8] bg-[#f8efdf] p-7 md:p-10">
-                <div className="mb-5 flex items-center gap-3"><Heart size={22} className="text-[#a56e1f]" /><h3 className="font-display text-2xl text-[#4d1814]"><Bi lang={lang} mr="अखंड पूजा आणि सेवा" en="Unbroken worship and service" /></h3></div>
-                <p className="text-[15px] leading-8 text-[#6f5444]"><Bi lang={lang} mr="त्या दिवसापासून आजतागायत वच्छला आक्का दत्तगुरूंना देवासमान मानून त्यांची अखंड पूजा-सेवा करत आहेत. आजीवन ब्रह्मचर्य पाळून त्या आजही या स्वयंभू स्थानी नित्यनेमाने देवपूजेत तल्लीन असतात." en="From that day to this, Vachhala Akka has revered Dattaguru as divine and continued unbroken worship and service. Having observed lifelong celibacy, she remains immersed in daily worship at this self-manifested shrine." /></p>
-              </article>
-              <article className="rounded-3xl border border-[#d6b36e] bg-[#fdf5e7] p-7 md:p-10">
-                <div className="mb-5 flex items-center gap-3"><Sparkles size={22} className="text-[#a56e1f]" /><h3 className="font-display text-2xl text-[#4d1814]"><Bi lang={lang} mr="औदुंबर वृक्षाची श्रद्धा" en="The Audumbar tradition" /></h3></div>
-                <p className="text-[15px] leading-8 text-[#6f5444]"><Bi lang={lang} mr="याच परिसरातील औदुंबराच्या दर्शनाने अनेक आजारी व्यक्ती बरे होऊ लागल्याची भक्तांची श्रद्धा आहे आणि या चमत्काराची वार्ता दूरवर पसरली. मनोरुग्ण, साखळदंडाने बांधलेले रुग्ण आणि दुर्धर आजाराने ग्रासलेले अनेक भाविक शिंगव्याला येऊन काही दिवस मुक्कामी राहिले — आणि बरे होऊन परतल्याचे अनुभव सांगितले जातात." en="Devotees believe that many people began recovering after darshan of the Audumbar tree here, and stories of this miracle spread far and wide. Accounts are shared of people facing mental illness, severe illness and difficult circumstances who came to Shingave, stayed for a few days, and returned healed. These are devotional experiences and traditional accounts." /></p>
-              </article>
-              <div className="rounded-2xl border-l-4 border-[#c8943e] bg-[#fffdf8] p-5 text-sm leading-7 text-[#76563f]"><Bi lang={lang} mr="येथे दर्शनासाठी येणाऱ्या प्रत्येक भाविकाला दैवी शक्तीचा प्रत्यक्ष अनुभव येतो, असा शिंगवे केशव येथील भाविकांचा अनुभव आहे." en="Devotees at Shingave Keshav describe experiencing the divine presence directly when they come for darshan." /></div>
             </div>
           </div>
         </section>
@@ -544,6 +534,26 @@ export default function Home() {
         <MessageCircle size={26} />
       </a>
       {showTop ? <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="fixed bottom-24 right-5 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b8] bg-[#fffdf8] text-[#7d271c] shadow-lg" aria-label="Back to top"><ArrowUp size={18} /></button> : null}
+
+      {vachhalaOpen ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#160706]/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Vachhala Akka full profile" onClick={() => setVachhalaOpen(false)}>
+        <div className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] border border-[#d8aa57]/35 bg-[#fffdf8] p-6 text-[#4d1814] shadow-2xl md:p-10" onClick={(event) => event.stopPropagation()}>
+          <button onClick={() => setVachhalaOpen(false)} className="absolute right-4 top-4 rounded-full border border-[#ead9b8] bg-[#fffdf8] p-2 text-[#4d1814] shadow-sm" aria-label="Close Vachhala Akka profile"><X size={20} /></button>
+          <div className="grid gap-7 md:grid-cols-[180px_1fr] md:items-start">
+            <div><img src={images.portrait} alt="ब्रह्मकुमारी वच्छला आक्का" className="mx-auto aspect-[4/5] w-full max-w-[180px] rounded-[1.5rem] object-cover object-top shadow-lg" /><p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-[#a56e1f]"><Bi lang={lang} mr="स्थानाची सेवाभावी परंपरा" en="A devoted voice of the shrine's tradition" /></p></div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><Bi lang={lang} mr="कथा · परंपरा · सेवा" en="Story · tradition · seva" /></p>
+              <h2 className="mt-2 pr-8 font-display text-3xl text-[#4d1814] md:text-4xl"><Bi lang={lang} mr="ब्रह्मकुमारी वच्छला आक्का" en="Brahmakumari Vachhala Akka" /></h2>
+              <div className="mt-5 rounded-2xl bg-[#f5ead2] p-5"><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#a56e1f]"><span className="font-display text-lg text-[#4d1814]">१९६३</span><Bi lang={lang} mr="बालपणीचे दिव्य दर्शन" en="A childhood divine vision" /></p><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="वयाच्या अवघ्या दहाव्या वर्षी, उंबराच्या झाडाजवळ खेळत असताना त्यांना श्री गुरुदेव दत्त लख्ख प्रकाशरूपाने प्रकट झाले, अशी या स्थानाची परंपरागत कथा सांगितली जाते. या दिव्य दर्शनाने त्यांच्या पुढील संपूर्ण आयुष्याला कलाटणी मिळाली." en="According to the shrine's traditional account, at the age of ten, while playing near an Audumbar tree, Shri Gurudev Datta appeared to her as a radiant form of light. This divine vision transformed the course of her life." /></p></div>
+            </div>
+          </div>
+          <div className="mt-7 grid gap-4 md:grid-cols-2">
+            <article className="rounded-2xl border border-[#ead9b8] bg-[#fffdf8] p-5"><h3 className="font-display text-xl text-[#4d1814]"><Bi lang={lang} mr="अखंड पूजा आणि सेवा" en="Unbroken worship and service" /></h3><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="त्या दिवसापासून आजतागायत वच्छला आक्का दत्तगुरूंना देवासमान मानून त्यांची अखंड पूजा-सेवा करत आहेत. आजीवन ब्रह्मचर्य पाळून त्या आजही या स्वयंभू स्थानी नित्यनेमाने देवपूजेत तल्लीन असतात." en="From that day to this, Vachhala Akka has revered Dattaguru as divine and continued unbroken worship and service. Having observed lifelong celibacy, she remains immersed in daily worship at this self-manifested shrine." /></p></article>
+            <article className="rounded-2xl border border-[#d6b36e] bg-[#fdf5e7] p-5"><h3 className="font-display text-xl text-[#4d1814]"><Bi lang={lang} mr="औदुंबर वृक्षाची श्रद्धा" en="The Audumbar tradition" /></h3><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="औदुंबराच्या दर्शनाने अनेक आजारी व्यक्ती बरे होऊ लागल्याची भक्तांची श्रद्धा आहे आणि या चमत्काराची वार्ता दूरवर पसरली." en="Devotees believe that many people began recovering after darshan of the Audumbar tree, and stories of this miracle spread far and wide." /></p></article>
+            <article className="rounded-2xl border border-[#ead9b8] bg-[#f8efdf] p-5 md:col-span-2"><h3 className="font-display text-xl text-[#4d1814]"><Bi lang={lang} mr="भाविकांचे अनुभव" en="Devotee experiences" /></h3><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="मनोरुग्ण, साखळदंडाने बांधलेले रुग्ण आणि दुर्धर आजाराने ग्रासलेले अनेक भाविक शिंगव्याला येऊन काही दिवस मुक्कामी राहिले — आणि बरे होऊन परतल्याचे अनुभव सांगितले जातात. येथे दर्शनासाठी येणाऱ्या प्रत्येक भाविकाला दैवी शक्तीचा प्रत्यक्ष अनुभव येतो, असा शिंगवे केशव येथील भाविकांचा अनुभव आहे." en="Devotional accounts are shared of people facing mental illness, severe illness and difficult circumstances who came to Shingave, stayed for a few days, and returned healed. Devotees at Shingave Keshav describe experiencing the divine presence directly when they come for darshan. These are traditional devotional accounts." /></p></article>
+          </div>
+          <p className="mt-6 text-center font-display text-lg text-[#a56e1f]"><Bi lang={lang} mr="राम कृष्ण हरी" en="Ram Krishna Hari" /></p>
+        </div>
+      </div> : null}
 
       {lightbox ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#160706]/90 p-5 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Image preview" onClick={() => setLightbox(null)}><button onClick={() => setLightbox(null)} className="absolute right-5 top-5 rounded-full border border-white/20 p-2 text-white" aria-label="Close image"><X size={22} /></button><div onClick={(event) => event.stopPropagation()} className="max-h-[90vh] max-w-5xl"><img src={lightbox.src} alt={lightbox.mr} className="max-h-[80vh] w-auto rounded-2xl object-contain shadow-2xl" /><p className="mt-4 text-center font-display text-xl text-[#ffe4a7]"><Bi lang={lang} mr={lightbox.mr} en={lightbox.en} /></p></div></div> : null}
     </div>
