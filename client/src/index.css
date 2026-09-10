@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Noto Sans Devanagari", "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Noto Serif Devanagari", Georgia, serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -30,30 +30,59 @@
 }
 
 :root {
+  --primary: #6d2119;
+  --primary-dark: #4d1814;
+  --primary-deep: #2d0c0b;
+  --primary-light: #8a3328;
+  --accent: #d7a84c;
+  --accent-light: #ebc979;
+  --accent-border: #c8943e;
+  --accent-dark: #a56e1f;
+  --gold-soft: #e6bf6d;
+  --gold-muted: #e5c889;
+  --gold-border: #d8aa57;
+  --gold-glow: #d3a556;
+  --background: #fffaf1;
+  --surface: #fffdf8;
+  --surface-warm: #f8efdf;
+  --surface-warm-light: #fdf5e7;
+  --surface-accent: #f5ead2;
+  --surface-border: #f2e5ca;
+  --text: #3e251b;
+  --cream: #fff6df;
+  --cream-muted: #f7e6c0;
+  --cream-soft: #f8e7be;
+  --cream-light: #f6e2b0;
+  --cream-strong: #fff0c8;
+  --cream-white: #fff3d5;
+  --cream-banner: #fff0c5;
+  --cream-gold: #ffe4a7;
+  --muted-text: #6f5444;
+  --text-link: #8e511c;
+  --overlay: #160706;
+  --surface-soft: #f7ecd8;
+  --surface-rose: #f3e4c5;
+  --border: #ead9b8;
   --radius: 0.8rem;
-  --background: oklch(0.99 0.012 83);
-  --foreground: oklch(0.28 0.045 47);
-  --card: oklch(1 0.004 80);
-  --card-foreground: oklch(0.28 0.045 47);
-  --popover: oklch(1 0.004 80);
-  --popover-foreground: oklch(0.28 0.045 47);
-  --primary: oklch(0.37 0.12 29);
-  --primary-foreground: oklch(0.98 0.03 84);
-  --secondary: oklch(0.95 0.04 82);
-  --secondary-foreground: oklch(0.37 0.12 29);
-  --muted: oklch(0.96 0.025 82);
-  --muted-foreground: oklch(0.52 0.05 48);
-  --accent: oklch(0.73 0.14 78);
-  --accent-foreground: oklch(0.3 0.08 29);
-  --border: oklch(0.9 0.045 80);
-  --input: oklch(0.9 0.045 80);
-  --ring: oklch(0.73 0.14 78);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary-foreground: var(--cream);
+  --secondary: var(--surface-accent);
+  --secondary-foreground: var(--primary-dark);
+  --muted: var(--surface-warm);
+  --muted-foreground: var(--muted-text);
+  --accent-foreground: var(--primary-dark);
+  --input: var(--border);
+  --ring: var(--accent);
 }
 
 @layer base {
   * { @apply border-border; }
   html { scroll-behavior: smooth; }
-  body { @apply bg-background text-foreground; font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif; }
+  body { @apply bg-background text-foreground; font-family: "Noto Sans Devanagari", "DM Sans", ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.7; }
   button, a { -webkit-tap-highlight-color: transparent; }
   button:focus-visible, a:focus-visible { outline: 3px solid #e2b967; outline-offset: 3px; }
 }
