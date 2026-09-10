@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   ArrowRight,
   ArrowUp,
@@ -132,15 +132,38 @@ export default function Home() {
   const [yatraOpen, setYatraOpen] = useState(false);
   const [enquirySent, setEnquirySent] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [navScrolled, setNavScrolled] = useState(false);
+  const [activeNav, setActiveNav] = useState("story");
+  const navRef = useRef<HTMLElement | null>(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   useEffect(() => {
     const saved = window.localStorage.getItem("gurudev-lang");
     if (saved === "mr" || saved === "en") setLang(saved);
 
-    const onScroll = () => setShowTop(window.scrollY > 600);
+    const onScroll = () => {
+      setShowTop(window.scrollY > 600);
+      setNavScrolled(window.scrollY > 32);
+      const marker = window.scrollY + 150;
+      const current = Array.from(document.querySelectorAll<HTMLElement>("main section[id]")).reverse().find((section) => section.offsetTop <= marker);
+      if (current) setActiveNav(current.id);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const link = navRef.current?.querySelector<HTMLElement>(`[data-nav-id="${activeNav}"]`);
+      const parent = navRef.current?.getBoundingClientRect();
+      const rect = link?.getBoundingClientRect();
+      if (parent && rect) setIndicator({ left: rect.left - parent.left, width: rect.width });
+    };
+    updateIndicator();
+    window.addEventListener("resize", updateIndicator);
+    return () => window.removeEventListener("resize", updateIndicator);
+  }, [activeNav, lang]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -230,7 +253,7 @@ export default function Home() {
         <div className="absolute -right-24 top-14 -z-10 h-80 w-80 rounded-full border border-[#d3a556]/20 bg-[#d3a556]/5 blur-2xl" />
         <div className="absolute bottom-0 left-0 -z-10 h-52 w-full opacity-25 [background-image:linear-gradient(135deg,transparent_48%,#e2b967_49%,#e2b967_51%,transparent_52%)] [background-size:28px_28px]" />
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10">
+        <div className={`temple-navbar mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10 ${navScrolled ? "is-scrolled" : ""}`}>
           <a href="#top" className="group flex items-center gap-3" aria-label="Home">
             <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#dbad57]/50 bg-[#d7a84c]/10 font-display text-xl text-[#e7c47f] shadow-[0_0_30px_rgba(215,168,76,.15)]">ॐ</span>
             <span className="leading-tight">
@@ -239,9 +262,10 @@ export default function Home() {
             </span>
           </a>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
+          <nav ref={navRef} className="temple-desktop-nav relative hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
+            <span className="nav-active-indicator" aria-hidden="true" style={{ transform: `translateX(${indicator.left}px)`, width: indicator.width }} />
             {navItems.map((item) => (
-              <a key={item.id} href={`#${item.id}`} className="text-[13px] text-[#f4dfb2]/80 transition hover:text-white">
+              <a key={item.id} data-nav-id={item.id} href={`#${item.id}`} className={`temple-nav-link text-[13px] text-[#f4dfb2]/80 transition hover:text-white ${activeNav === item.id ? "is-active" : ""}`}>
                 <Bi lang={lang} mr={item.mr} en={item.en} />
               </a>
             ))}
@@ -285,33 +309,33 @@ export default function Home() {
         ) : null}
 
         <div id="top" className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-16 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-28 lg:pt-20">
-          <div className="max-w-2xl">
-            <div className="mb-5 flex flex-wrap gap-2">
+          <div className="hero-copy max-w-2xl">
+            <div className="hero-reveal mb-5 flex flex-wrap gap-2">
               <Pill tone="dark"><Sparkles size={13} /><Bi lang={lang} mr="स्वयंभू स्थान" en="Self-manifested shrine" /></Pill>
               <Pill tone="dark"><CalendarDays size={13} /><Bi lang={lang} mr="दर गुरुवारी दर्शन" en="Thursday darshan" /></Pill>
             </div>
-            <p className="mb-4 font-display text-xl text-[#d7aa55]">•|| श्री गुरुदेव दत्त ||•</p>
-            <h1 className="max-w-3xl font-display text-5xl leading-[1.08] tracking-[-0.03em] text-[#fff6df] sm:text-6xl lg:text-8xl">
+            <p className="hero-reveal hero-eyebrow mb-4 font-display text-xl text-[#d7aa55]">•|| श्री गुरुदेव दत्त ||•</p>
+            <h1 className="hero-reveal hero-title max-w-3xl font-display text-5xl leading-[1.08] tracking-[-0.03em] text-[#fff6df] sm:text-6xl lg:text-8xl">
               <Bi lang={lang} mr="स्वयंभू श्री गुरुदेव दत्त देवस्थान" en="Swayambhu Shri Gurudev Datta Devasthan" />
             </h1>
-            <div className="mt-6 flex items-center gap-3 text-sm font-semibold text-[#e5c889]">
+            <div className="hero-reveal mt-6 flex items-center gap-3 text-sm font-semibold text-[#e5c889]">
               <MapPin size={17} />
               <span><Bi lang={lang} mr="शिंगवे केशव (दत्ताचे) · ता. पाथर्डी · जि. अहिल्यानगर — ४१४५०१" en="Shingave Keshav (Dattache) · Pathardi · Ahilyanagar — 414501" /></span>
             </div>
-            <p className="mt-7 max-w-xl text-[16px] leading-8 text-[#f7e6c0]/75">
+            <p className="hero-reveal mt-7 max-w-xl text-[16px] leading-8 text-[#f7e6c0]/75">
               <Bi lang={lang} mr="उंबराच्या सावलीत दत्तगुरूंनी प्रकाशरूपाने दर्शन दिलेले हे श्रद्धास्थान — दर गुरुवारी असंख्य भाविकांच्या भक्तीने उजळते." en="A sacred place where Dattaguru is believed to have appeared as light beneath the Audumbar tree — illuminated by the devotion of countless visitors every Thursday." />
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="hero-reveal hero-actions mt-9 flex flex-wrap gap-3">
               <a href="#darshan" className="group inline-flex items-center gap-3 rounded-full bg-[#d8a94d] px-5 py-3.5 text-sm font-bold text-[#4d1814] transition hover:-translate-y-1 hover:bg-[#ebc979]">
-                <Bi lang={lang} mr="दर्शन व आरतीची वेळ" en="Darshan & aarti timings" /><ArrowRight size={17} className="transition group-hover:translate-x-1" />
+                <Bi lang={lang} mr="दर्शनाची माहिती" en="Darshan information" /><ArrowRight size={17} className="transition group-hover:translate-x-1" />
               </a>
-              <a href="https://maps.app.goo.gl/tmXTAoqHV6kP91RW9?g_st=aw" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-[#edcf91]/35 px-5 py-3.5 text-sm font-semibold text-[#f7e6c0] transition hover:bg-white/10">
-                <LocateFixed size={17} /><Bi lang={lang} mr="नकाशावर मार्ग" en="Open in Maps" /><ArrowUpRight size={15} />
+              <a href="#story" className="inline-flex items-center gap-2 rounded-full border border-[#edcf91]/35 px-5 py-3.5 text-sm font-semibold text-[#f7e6c0] transition hover:bg-white/10">
+                <ScrollText size={17} /><Bi lang={lang} mr="देवस्थानाबद्दल" en="About the temple" /><ArrowUpRight size={15} />
               </a>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[520px] lg:justify-self-end">
+          <div className="hero-image-wrap relative mx-auto w-full max-w-[520px] lg:justify-self-end">
             <div className="absolute -inset-5 rounded-[2rem] border border-[#dbad57]/20 bg-[#d7a84c]/10 blur-sm" />
             <div className="hero-deity-card relative overflow-hidden rounded-[1.8rem] border border-[#e4c47e]/35 bg-[#260c0b] p-2 shadow-2xl shadow-[#260c0b]/40">
               <img src={images.sanctum} alt="स्वयंभू श्री गुरुदेव दत्त मूर्ती" className="aspect-[4/5] w-full rounded-[1.35rem] object-cover object-center" />
