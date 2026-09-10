@@ -67,6 +67,30 @@ const galleryItems = [
   { src: images.prasad, mr: "भाविकांसाठी महाप्रसाद", en: "Mahaprasad served to devotees" },
 ];
 
+const upcomingEvents = [
+  { date: "2026-09-10", type: "thursday" },
+  { date: "2026-09-17", type: "thursday" },
+  { date: "2026-09-24", type: "thursday" },
+  { date: "2026-10-01", type: "thursday" },
+  { date: "2026-10-08", type: "thursday" },
+  { date: "2026-10-15", type: "thursday" },
+  { date: "2026-10-22", type: "thursday" },
+  { date: "2026-10-29", type: "thursday" },
+  { date: "2026-11-05", type: "thursday" },
+  { date: "2026-11-12", type: "thursday" },
+  { date: "2026-11-19", type: "thursday" },
+  { date: "2026-11-26", type: "thursday" },
+  { date: "2026-12-03", type: "thursday" },
+  { date: "2026-12-10", type: "thursday" },
+  { date: "2026-12-17", type: "thursday" },
+  { date: "2026-12-23", type: "fair" },
+];
+
+const formatEventDate = (date: string, lang: Lang) => {
+  const value = new Date(`${date}T12:00:00`);
+  return new Intl.DateTimeFormat(lang === "mr" ? "mr-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" }).format(value);
+};
+
 function SectionHeading({ eyebrow, title, copy, lang }: { eyebrow: string; title: string; copy?: string; lang: Lang }) {
   return (
     <div className="mb-10 max-w-2xl">
@@ -390,6 +414,26 @@ export default function Home() {
                 </article>
               ))}
             </div>
+          </div>
+          <div className="mx-auto mt-10 max-w-7xl rounded-[2rem] border border-[#ead9b8] bg-[#fffdf8] p-6 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-8">
+            <div className="flex flex-col justify-between gap-3 border-b border-[#ead9b8] pb-5 sm:flex-row sm:items-center">
+              <div>
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><CalendarDays size={16} /> <Bi lang={lang} mr="आगामी कार्यक्रम कॅलेंडर" en="Upcoming events calendar" /></p>
+                <h3 className="mt-2 font-display text-2xl text-[#4d1814]"><Bi lang={lang} mr="गुरुवार दर्शन आणि वार्षिक यात्रा" en="Thursday darshan & annual yatra" /></h3>
+              </div>
+              <Pill><CalendarDays size={13} /> 2026</Pill>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {upcomingEvents.map((event) => {
+                const fair = event.type === "fair";
+                return <div key={event.date} className={`rounded-2xl border p-4 ${fair ? "border-[#c8943e] bg-[#4d1814] text-[#fff0c8] shadow-lg shadow-[#4d1814]/10 sm:col-span-2 lg:col-span-2" : "border-[#ead9b8] bg-[#f8efdf] text-[#4d1814]"}`}>
+                  <div className="flex items-center justify-between gap-3"><span className={`text-[11px] font-bold uppercase tracking-[0.16em] ${fair ? "text-[#e6bf6d]" : "text-[#a56e1f]"}`}><Bi lang={lang} mr={fair ? "विशेष यात्रा" : "गुरुवार"} en={fair ? "Annual yatra" : "Thursday"} /></span>{fair ? <Sparkles size={16} className="text-[#e6bf6d]" /> : <Clock3 size={15} className="text-[#a56e1f]" />}</div>
+                  <p className={`mt-3 font-display text-xl ${fair ? "text-[#fff0c8]" : "text-[#4d1814]"}`}>{formatEventDate(event.date, lang)}</p>
+                  <p className={`mt-1 text-xs leading-5 ${fair ? "text-[#f7e6c0]/75" : "text-[#76563f]"}`}><Bi lang={lang} mr={fair ? "वार्षिक यात्रा / जत्रा · बुधवार" : "विशेष दर्शन व सेवा"} en={fair ? "Annual fair · Wednesday" : "Special darshan & seva"} /></p>
+                </div>;
+              })}
+            </div>
+            <p className="mt-5 text-xs leading-6 text-[#8b6b55]"><Bi lang={lang} mr="यात्रेची वेळ, मिरवणूक, महाप्रसाद आणि निवास व्यवस्थेबाबत अंतिम माहिती कमिटीमार्फत जाहीर केली जाईल." en="Final timings, procession, mahaprasad and accommodation details for the yatra will be announced by the committee." /></p>
           </div>
         </section>
 
