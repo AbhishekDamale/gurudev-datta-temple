@@ -65,6 +65,12 @@
 }
 
 .mobile-bottom-nav { display: none; }
+.large-text { font-size: 110%; }
+.large-text p, .large-text li, .large-text label { line-height: 1.9; }
+.high-contrast { filter: contrast(1.08); }
+.high-contrast .text-\[\#6f5444\], .high-contrast .text-\[\#8b6b55\] { color: #4d3527 !important; }
+.announcement-strip { position: relative; }
+input, select, textarea { min-height: 48px; }
 
 .mobile-menu-layer {
   position: fixed;

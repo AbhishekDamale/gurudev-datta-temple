@@ -1,9 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ArrowRight,
   ArrowUp,
   ArrowUpRight,
+  Accessibility,
+  Bell,
   CalendarDays,
+  CalendarPlus,
   Check,
   ChevronDown,
   ChevronRight,
@@ -11,6 +14,7 @@ import {
   Copy,
   ExternalLink,
   Heart,
+  Highlighter,
   Languages,
   LocateFixed,
   MapPin,
@@ -21,6 +25,9 @@ import {
   ScrollText,
   Share2,
   Sparkles,
+  Send,
+  ShieldCheck,
+  Volume2,
   Utensils,
   Users,
   WalletCards,
@@ -120,6 +127,11 @@ export default function Home() {
   const [vachhalaOpen, setVachhalaOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const [largeText, setLargeText] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [yatraOpen, setYatraOpen] = useState(false);
+  const [enquirySent, setEnquirySent] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("gurudev-lang");
@@ -151,6 +163,7 @@ export default function Home() {
       if (event.key === "Escape") setLightbox(null);
       if (event.key === "Escape") setMenuOpen(false);
       if (event.key === "Escape") setVachhalaOpen(false);
+      if (event.key === "Escape") setYatraOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -177,8 +190,37 @@ export default function Home() {
     window.setTimeout(() => setCopied(false), 2200);
   };
 
+  const addToCalendar = (event: { date: string; type: string }) => {
+    const fair = event.type === "fair";
+    const start = event.date.replaceAll("-", "");
+    const end = fair ? "20261224" : event.date.replaceAll("-", "");
+    const title = fair ? "देवस्थानची वार्षिक यात्रा / Temple Annual Yatra" : "गुरुवार विशेष दर्शन / Thursday Darshan";
+    const details = fair ? "Annual yatra at Swayambhu Shri Gurudev Datta Devasthan, Shingave Keshav. Confirm timings with the committee." : "Special Thursday darshan at Swayambhu Shri Gurudev Datta Devasthan, Shingave Keshav.";
+    window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(details)}&location=${encodeURIComponent("Shingave Keshav (Dattache), Pathardi, Ahilyanagar 414501")}`, "_blank", "noopener,noreferrer");
+  };
+
+  const playStory = () => {
+    if (!("speechSynthesis" in window)) return;
+    if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
+    const text = "ब्रह्मकुमारी वच्छला आक्का यांच्या परंपरागत कथेनुसार, १९६३ मध्ये वयाच्या दहाव्या वर्षी उंबराच्या झाडाजवळ श्री गुरुदेव दत्त त्यांना प्रकाशरूपाने प्रकट झाले. त्या दिवसापासून त्यांनी अखंड पूजा आणि सेवा केली. शिंगवे केशव येथील हे स्थान श्रद्धा, सेवा आणि समाधानाचे केंद्र आहे.";
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "mr-IN";
+    utterance.rate = .86;
+    utterance.onend = () => setSpeaking(false);
+    setSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const submitEnquiry = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const body = `Temple enquiry\nName: ${data.get("name")}\nPhone: ${data.get("phone")}\nRequest: ${data.get("service")}\nMessage: ${data.get("message")}`;
+    window.open(`https://wa.me/919775757375?text=${encodeURIComponent(body)}`, "_blank", "noopener,noreferrer");
+    setEnquirySent(true);
+  };
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#fffaf1] text-[#3e251b]">
+    <div className={`min-h-screen overflow-x-hidden bg-[#fffaf1] text-[#3e251b] ${largeText ? "large-text" : ""} ${highContrast ? "high-contrast" : ""}`}>
       <a href="#main-content" className="skip-link">
         <Bi lang={lang} mr="मुख्य मजकुराकडे जा" en="Skip to content" />
       </a>
@@ -206,6 +248,8 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <button onClick={() => setLargeText((value) => !value)} className="hidden rounded-full border border-[#d9b775]/40 p-2 text-[#f6e2b0] transition hover:bg-white/10 sm:inline-flex" aria-label={largeText ? "Use normal text size" : "Increase text size"} aria-pressed={largeText}><Accessibility size={15} /></button>
+            <button onClick={() => setHighContrast((value) => !value)} className="hidden rounded-full border border-[#d9b775]/40 p-2 text-[#f6e2b0] transition hover:bg-white/10 sm:inline-flex" aria-label={highContrast ? "Use normal contrast" : "Increase contrast"} aria-pressed={highContrast}><Highlighter size={15} /></button>
             <button onClick={toggleLang} className="hidden items-center gap-2 rounded-full border border-[#d9b775]/40 px-3 py-2 text-xs text-[#f6e2b0] transition hover:bg-white/10 sm:flex" aria-label="Change language">
               <Languages size={15} />
               <Bi lang={lang} mr="English" en="मराठी" />
@@ -283,6 +327,13 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      <section className="announcement-strip border-b border-[#d9b56c]/40 bg-[#fff0c5] px-5 py-3 text-[#4d1814] lg:px-10" aria-label="Temple announcements">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3"><Bell className="mt-0.5 shrink-0 text-[#a56e1f]" size={19} /><div><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#a56e1f]"><Bi lang={lang} mr="ताज्या सूचना" en="Live announcements" /></p><p className="mt-1 text-sm font-semibold"><Bi lang={lang} mr="दर गुरुवारी विशेष दर्शन · २३ डिसेंबर २०२६ वार्षिक यात्रा · महाप्रसाद उपलब्ध" en="Thursday special darshan · Annual yatra on 23 Dec 2026 · Mahaprasad available" /></p></div></div>
+          <button onClick={() => setYatraOpen(true)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#4d1814] px-4 py-2.5 text-xs font-bold text-[#fff0c5] transition hover:bg-[#6d2119]" aria-haspopup="dialog"><CalendarDays size={15} /><Bi lang={lang} mr="यात्रा माहिती" en="Yatra details" /></button>
+        </div>
+      </section>
 
       <main id="main-content">
         <section className="relative z-10 mx-auto -mt-8 max-w-7xl px-5 lg:px-10">
@@ -405,6 +456,10 @@ export default function Home() {
               <span><Bi lang={lang} mr="कमिटीशी संपर्क किंवा सेवा सहभागासाठी मंदिराशी आधी संपर्क साधावा." en="Please contact the temple in advance for committee enquiries or seva participation." /></span>
               <a href="tel:9775757375" className="inline-flex shrink-0 items-center gap-2 font-bold text-[#8e511c]"><Phone size={16} /> 9775757375</a>
             </div>
+            <div className="mt-5 grid gap-4 rounded-3xl border border-[#ead9b8] bg-[#f8efdf] p-6 md:grid-cols-[1fr_1fr] md:p-8">
+              <div><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><ShieldCheck size={16} /><Bi lang={lang} mr="अधिकृत संपर्क" en="Verified contact" /></p><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="देवस्थान कमिटीची अधिकृत नावे आणि पदाधिकारी यांची माहिती अंतिम पुष्टी झाल्यानंतर येथे प्रसिद्ध केली जाईल." en="Official committee member names and trustee roles will be published here after final verification." /></p></div>
+              <div className="rounded-2xl bg-[#fffdf8] p-5"><p className="text-xs font-bold uppercase tracking-[0.15em] text-[#a56e1f]"><Bi lang={lang} mr="सध्या अधिकृत फोन" en="Current official phone" /></p><a href="tel:9775757375" className="mt-2 inline-flex items-center gap-2 font-display text-xl text-[#4d1814]"><Phone size={17} /> 9775757375</a><p className="mt-2 text-xs leading-5 text-[#8b6b55]"><Bi lang={lang} mr="कमिटी, सेवा आणि देणगीची माहिती या क्रमांकावर पडताळा." en="Verify committee, seva and donation details using this number." /></p></div>
+            </div>
           </div>
         </section>
 
@@ -454,6 +509,7 @@ export default function Home() {
                   <div className="flex items-center justify-between gap-3"><span className={`text-[11px] font-bold uppercase tracking-[0.16em] ${fair ? "text-[#e6bf6d]" : "text-[#a56e1f]"}`}><Bi lang={lang} mr={fair ? "विशेष यात्रा" : "गुरुवार"} en={fair ? "Annual yatra" : "Thursday"} /></span>{fair ? <Sparkles size={16} className="text-[#e6bf6d]" /> : <Clock3 size={15} className="text-[#a56e1f]" />}</div>
                   <p className={`mt-3 font-display text-xl ${fair ? "text-[#fff0c8]" : "text-[#4d1814]"}`}>{formatEventDate(event.date, lang)}</p>
                   <p className={`mt-1 text-xs leading-5 ${fair ? "text-[#f7e6c0]/75" : "text-[#76563f]"}`}><Bi lang={lang} mr={fair ? "वार्षिक यात्रा / जत्रा · बुधवार" : "विशेष दर्शन व सेवा"} en={fair ? "Annual fair · Wednesday" : "Special darshan & seva"} /></p>
+                  <div className="mt-3 flex flex-wrap gap-2"><button onClick={() => addToCalendar(event)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold ${fair ? "bg-[#d7a84c] text-[#4d1814]" : "bg-[#fffdf8] text-[#8e511c]"}`}><CalendarPlus size={13} /><Bi lang={lang} mr="कॅलेंडर" en="Calendar" /></button>{fair ? <button onClick={() => setYatraOpen(true)} className="inline-flex items-center gap-1.5 rounded-full border border-[#e6bf6d]/40 px-3 py-1.5 text-[11px] font-bold text-[#fff0c8]"><ArrowUpRight size={13} /><Bi lang={lang} mr="माहिती" en="Details" /></button> : null}</div>
                 </div>;
               })}
             </div>
@@ -489,6 +545,7 @@ export default function Home() {
                 <div className="rounded-2xl border border-[#ead9b8] bg-[#fffdf8] p-5"><p className="text-xs font-bold uppercase tracking-[0.15em] text-[#a56e1f]"><Bi lang={lang} mr="संपर्क" en="Contact" /></p><a href="tel:9775757375" className="mt-2 inline-flex items-center gap-2 font-display text-lg text-[#4d1814]">9775757375 <ArrowUpRight size={15} /></a></div>
               </div>
               <p className="mt-5 flex gap-2 text-xs leading-6 text-[#8b6b55]"><WalletCards size={16} className="mt-1 shrink-0 text-[#a56e1f]" /><Bi lang={lang} mr="देणगी करण्यापूर्वी अधिकृत संपर्कावरून तपशील पडताळून पाहावा." en="Please verify the details through the official contact before making a donation." /></p>
+              <div className="mt-5 rounded-2xl border border-[#d6b36e] bg-[#fdf5e7] p-5"><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#a56e1f]"><ShieldCheck size={16} /><Bi lang={lang} mr="सुरक्षित देणगी मार्गदर्शक" en="Donation safety guide" /></p><ol className="mt-3 space-y-2 text-sm leading-6 text-[#6f5444]"><li>1. <Bi lang={lang} mr="फक्त दाखवलेल्या अधिकृत UPI ID ची खात्री करा." en="Confirm the official UPI ID shown above." /></li><li>2. <Bi lang={lang} mr="UPI PIN कोणालाही सांगू नका; PIN फक्त तुमच्या बँक अॅपमध्ये टाका." en="Never share your UPI PIN; enter it only in your banking app." /></li><li>3. <Bi lang={lang} mr="पावती किंवा देणगीची नोंद हवी असल्यास ९७७५७५७३७५ वर संपर्क करा." en="For a receipt or donation record, contact 9775757375." /></li></ol></div>
             </div>
           </div>
         </section>
@@ -509,6 +566,18 @@ export default function Home() {
               <p className="mt-3 text-sm leading-7 text-[#f8e7be]/70"><Bi lang={lang} mr="मंदिर परिसरात भाविकांसाठी मुक्काम व भोजनाची सोय उपलब्ध आहे. कृपया आधी संपर्क करावा." en="Accommodation and food are available for devotees within the temple premises. Please contact us in advance." /></p>
               <div className="mt-7 space-y-3 border-t border-white/10 pt-6 text-sm"><div className="flex items-center justify-between"><span className="text-[#f8e7be]/55"><Bi lang={lang} mr="निवास सोय" en="Accommodation" /></span><span className="font-semibold text-[#e2b967]"><Bi lang={lang} mr="उपलब्ध" en="Available" /></span></div><div className="flex items-center justify-between"><span className="text-[#f8e7be]/55"><Bi lang={lang} mr="जेवणाची सोय" en="Meals" /></span><span className="font-semibold text-[#e2b967]"><Bi lang={lang} mr="उपलब्ध" en="Available" /></span></div><div className="flex items-center justify-between"><span className="text-[#f8e7be]/55"><Bi lang={lang} mr="आधी संपर्क" en="Advance contact" /></span><a href="tel:9775757375" className="font-semibold text-[#e2b967]">9775757375</a></div></div>
             </div>
+          </div>
+        </section>
+
+        <section id="enquiry" className="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
+            <SectionHeading lang={lang} eyebrow={lang === "mr" ? "सेवा व संपर्क" : "Seva & contact"} title={lang === "mr" ? "आपली विनंती पाठवा" : "Send an enquiry"} copy={lang === "mr" ? "निवास, भोजन, पूजा, सेवा सहभाग किंवा कमिटीशी संपर्कासाठी माहिती पाठवा." : "Request accommodation, meals, puja booking, seva participation or committee contact."} />
+            <form onSubmit={submitEnquiry} className="rounded-[2rem] border border-[#ead9b8] bg-[#fffdf8] p-6 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-8">
+              <div className="grid gap-4 sm:grid-cols-2"><label className="grid gap-2 text-sm font-semibold text-[#4d1814]"><Bi lang={lang} mr="नाव" en="Name" /><input required name="name" className="rounded-xl border border-[#ead9b8] bg-[#fffaf1] px-4 py-3 font-normal outline-none focus:border-[#a56e1f]" /></label><label className="grid gap-2 text-sm font-semibold text-[#4d1814]"><Bi lang={lang} mr="फोन" en="Phone" /><input required name="phone" type="tel" inputMode="tel" className="rounded-xl border border-[#ead9b8] bg-[#fffaf1] px-4 py-3 font-normal outline-none focus:border-[#a56e1f]" /></label></div>
+              <label className="mt-4 grid gap-2 text-sm font-semibold text-[#4d1814]"><Bi lang={lang} mr="कशासाठी संपर्क?" en="What do you need?" /><select required name="service" defaultValue="" className="rounded-xl border border-[#ead9b8] bg-[#fffaf1] px-4 py-3 font-normal outline-none focus:border-[#a56e1f]"><option value="" disabled><Bi lang={lang} mr="सेवा निवडा" en="Choose a service" /></option><option value="accommodation"><Bi lang={lang} mr="निवास व भोजन" en="Accommodation & meals" /></option><option value="puja"><Bi lang={lang} mr="पूजा / अभिषेक" en="Puja / abhishek" /></option><option value="seva"><Bi lang={lang} mr="सेवा सहभाग" en="Seva participation" /></option><option value="committee"><Bi lang={lang} mr="कमिटीशी संपर्क" en="Committee contact" /></option></select></label>
+              <label className="mt-4 grid gap-2 text-sm font-semibold text-[#4d1814]"><Bi lang={lang} mr="संदेश" en="Message" /><textarea required name="message" rows={4} className="resize-y rounded-xl border border-[#ead9b8] bg-[#fffaf1] px-4 py-3 font-normal outline-none focus:border-[#a56e1f]" /></label>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center"><button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#4d1814] px-5 py-3.5 text-sm font-bold text-[#f9e5b4] transition hover:bg-[#6d2119]"><Send size={16} /><Bi lang={lang} mr="विनंती पाठवा" en="Send enquiry" /></button><p role="status" className="text-xs leading-5 text-[#8b6b55]">{enquirySent ? <Bi lang={lang} mr="तुमचा संदेश तयार आहे; WhatsApp किंवा फोनवर पाठवता येईल." en="Your message is ready; you can send it via WhatsApp or phone." /> : <Bi lang={lang} mr="तुमचा फोन क्रमांक फक्त मंदिराशी संपर्कासाठी वापरला जाईल." en="Your phone number is used only for temple contact." />}</p></div>
+            </form>
           </div>
         </section>
       </main>
@@ -535,6 +604,8 @@ export default function Home() {
       </a>
       {showTop ? <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="fixed bottom-24 right-5 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b8] bg-[#fffdf8] text-[#7d271c] shadow-lg" aria-label="Back to top"><ArrowUp size={18} /></button> : null}
 
+      {yatraOpen ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#160706]/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Yatra details" onClick={() => setYatraOpen(false)}><div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-[#fffdf8] p-6 text-[#4d1814] shadow-2xl md:p-9" onClick={(event) => event.stopPropagation()}><button onClick={() => setYatraOpen(false)} className="absolute right-4 top-4 rounded-full border border-[#ead9b8] p-2" aria-label="Close yatra details"><X size={20} /></button><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><Bi lang={lang} mr="२३ डिसेंबर २०२६ · बुधवार" en="23 December 2026 · Wednesday" /></p><h2 className="mt-2 pr-8 font-display text-3xl"><Bi lang={lang} mr="वार्षिक यात्रा / जत्रा माहिती" en="Annual yatra information" /></h2><div className="mt-6 grid gap-3 sm:grid-cols-2">{[{mr:"दर्शन व पूजा",en:"Darshan & puja",bodyMr:"सकाळी दर्शन, विशेष पूजा व अभिषेकाची वेळ कमिटीमार्फत जाहीर केली जाईल.",bodyEn:"Morning darshan, special puja and abhishek timings will be announced by the committee."},{mr:"मिरवणूक मार्ग",en:"Procession route",bodyMr:"मंदिर परिसर व गावातील मार्गाची अंतिम माहिती लवकरच जाहीर होईल.",bodyEn:"The final temple and village procession route will be announced soon."},{mr:"पार्किंग",en:"Parking",bodyMr:"भाविकांनी स्वयंसेवकांच्या सूचनेनुसार वाहनतळाचा वापर करावा.",bodyEn:"Please follow volunteers' directions for designated parking."},{mr:"निवास व महाप्रसाद",en:"Stay & mahaprasad",bodyMr:"निवास, भोजन आणि महाप्रसादासाठी आधी ९७७५७५७३७५ वर संपर्क करा.",bodyEn:"Contact 9775757375 in advance for stay, meals and mahaprasad."}].map((item)=><div key={item.en} className="rounded-2xl border border-[#ead9b8] bg-[#f8efdf] p-5"><h3 className="font-display text-xl"><Bi lang={lang} mr={item.mr} en={item.en} /></h3><p className="mt-2 text-sm leading-6 text-[#6f5444]"><Bi lang={lang} mr={item.bodyMr} en={item.bodyEn} /></p></div>)}</div><div className="mt-5 rounded-2xl bg-[#4d1814] p-5 text-[#fff0c8]"><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#e6bf6d]"><Phone size={15} /><Bi lang={lang} mr="आपत्कालीन / अधिकृत संपर्क" en="Emergency / official contact" /></p><a href="tel:9775757375" className="mt-2 inline-flex font-display text-2xl">9775757375</a></div></div></div> : null}
+
       {vachhalaOpen ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#160706]/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Vachhala Akka full profile" onClick={() => setVachhalaOpen(false)}>
         <div className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] border border-[#d8aa57]/35 bg-[#fffdf8] p-6 text-[#4d1814] shadow-2xl md:p-10" onClick={(event) => event.stopPropagation()}>
           <button onClick={() => setVachhalaOpen(false)} className="absolute right-4 top-4 rounded-full border border-[#ead9b8] bg-[#fffdf8] p-2 text-[#4d1814] shadow-sm" aria-label="Close Vachhala Akka profile"><X size={20} /></button>
@@ -543,6 +614,7 @@ export default function Home() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a56e1f]"><Bi lang={lang} mr="कथा · परंपरा · सेवा" en="Story · tradition · seva" /></p>
               <h2 className="mt-2 pr-8 font-display text-3xl text-[#4d1814] md:text-4xl"><Bi lang={lang} mr="ब्रह्मकुमारी वच्छला आक्का" en="Brahmakumari Vachhala Akka" /></h2>
+              <button onClick={playStory} className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#4d1814] px-4 py-2.5 text-xs font-bold text-[#ffe8ad] transition hover:bg-[#6d2119]" aria-pressed={speaking}><Volume2 size={15} /><Bi lang={lang} mr={speaking ? "कथा थांबवा" : "मराठी कथा ऐका"} en={speaking ? "Stop narration" : "Listen in Marathi"} /></button>
               <div className="mt-5 rounded-2xl bg-[#f5ead2] p-5"><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#a56e1f]"><span className="font-display text-lg text-[#4d1814]">१९६३</span><Bi lang={lang} mr="बालपणीचे दिव्य दर्शन" en="A childhood divine vision" /></p><p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr="वयाच्या अवघ्या दहाव्या वर्षी, उंबराच्या झाडाजवळ खेळत असताना त्यांना श्री गुरुदेव दत्त लख्ख प्रकाशरूपाने प्रकट झाले, अशी या स्थानाची परंपरागत कथा सांगितली जाते. या दिव्य दर्शनाने त्यांच्या पुढील संपूर्ण आयुष्याला कलाटणी मिळाली." en="According to the shrine's traditional account, at the age of ten, while playing near an Audumbar tree, Shri Gurudev Datta appeared to her as a radiant form of light. This divine vision transformed the course of her life." /></p></div>
             </div>
           </div>
