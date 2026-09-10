@@ -166,6 +166,21 @@ export default function Home() {
   }, [activeNav, lang]);
 
   useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main section"));
+    sections.forEach((section) => section.classList.add("reveal-ready"));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.08 });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = lang;
     window.localStorage.setItem("gurudev-lang", lang);
   }, [lang]);
@@ -360,14 +375,14 @@ export default function Home() {
       </section>
 
       <main id="main-content">
-        <section className="relative z-10 mx-auto -mt-8 max-w-7xl px-5 lg:px-10">
+        <section className="info-strip relative z-10 mx-auto -mt-8 max-w-7xl px-5 lg:px-10">
           <div className="grid gap-3 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_20px_70px_rgba(77,24,20,.12)] md:grid-cols-3">
             {[
               { icon: <Clock3 size={20} />, title: { mr: "आरती वेळ", en: "Aarti timings" }, value: { mr: "सकाळी ६:०० · सायंकाळी ७:००", en: "6:00 AM · 7:00 PM" } },
               { icon: <Users size={20} />, title: { mr: "भक्तांसाठी सोय", en: "Devotee facilities" }, value: { mr: "निवास व भोजन उपलब्ध", en: "Stay & food available" } },
               { icon: <Phone size={20} />, title: { mr: "आधी संपर्क करा", en: "Contact in advance" }, value: { mr: "९७७५७५७३७५", en: "9775757375" } },
             ].map((item) => (
-              <div key={item.title.en} className="flex items-center gap-4 rounded-2xl px-4 py-4 md:px-6">
+              <div key={item.title.en} className="info-card flex items-center gap-4 rounded-2xl px-4 py-4 md:px-6">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#f6ecd8] text-[var(--accent-dark)]">{item.icon}</span>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--accent-dark)]"><Bi lang={lang} mr={item.title.mr} en={item.title.en} /></p>
@@ -378,7 +393,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="story" className="mx-auto max-w-7xl px-5 py-24 lg:px-10 lg:py-32">
+        <section id="story" className="story-section content-container px-5 py-24 lg:px-10 lg:py-32">
           <div className="grid items-start gap-14 lg:grid-cols-[.8fr_1.2fr]">
             <div className="relative lg:sticky lg:top-24">
               <SectionHeading lang={lang} eyebrow={lang === "mr" ? "कथा आणि परंपरा" : "Story & tradition"} title={lang === "mr" ? "स्वयंभू दर्शनाची कथा" : "The story of the divine appearance"} copy={lang === "mr" ? "उंबराच्या सावलीतून दत्तगुरूंचे दर्शन झाल्याची ही पवित्र परंपरा भक्तांच्या श्रद्धेतून पिढ्यान्‌पिढ्या जपली जाते." : "The sacred tradition of Dattaguru appearing beneath the Audumbar tree has been carried through generations by the faith of devotees."} />
@@ -392,12 +407,12 @@ export default function Home() {
               </button>
             </div>
             <div className="space-y-5">
-              <article className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-10">
+              <article className="story-panel rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-10">
                 <div className="mb-5 flex items-center justify-between"><span className="rounded-full bg-[var(--surface-accent)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--accent-dark)]">01 · <Bi lang={lang} mr="विश्वास" en="Faith" /></span><ScrollText size={21} className="text-[var(--accent)]" /></div>
                 <h3 className="font-display text-2xl text-[var(--primary-dark)]"><Bi lang={lang} mr="प्रकाशरूपाने झालेले दर्शन" en="A vision in the form of light" /></h3>
                 <p className="mt-4 text-[15px] leading-8 text-[var(--muted-text)]"><Bi lang={lang} mr="शिंगवे केशव येथील या पवित्र भूमीत औदुंबर वृक्षाच्या सान्निध्यात स्वयंभू श्री गुरुदेव दत्तांचे प्रकाशरूप दर्शन झाल्याची श्रद्धा आहे. या अनुभूतीने हे स्थान भक्तांसाठी शांतता, सेवा आणि समाधानाचे केंद्र बनले." en="At this sacred place in Shingave Keshav, devotees believe that Swayambhu Shri Gurudev Datta revealed himself as light in the presence of the Audumbar tree. That experience has made the shrine a place of peace, service and spiritual solace." /></p>
               </article>
-              <blockquote className="rounded-3xl bg-[var(--surface-rose)] p-7 text-[#6d351d] md:p-9">
+              <blockquote className="story-quote rounded-3xl bg-[var(--surface-rose)] p-7 text-[#6d351d] md:p-9">
                 <Quote size={28} className="mb-4 text-[#b27a25]" />
                 <p className="font-display text-2xl leading-relaxed"><Bi lang={lang} mr="जिथे श्रद्धा असते, तिथे दत्तगुरूंची कृपा असते." en="Where there is faith, there is the grace of Dattaguru." /></p>
                 <footer className="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#9b6b32]">Shri Gurudev Datta · <Bi lang={lang} mr="राम कृष्ण हरी" en="Ram Krishna Hari" /></footer>
@@ -407,7 +422,7 @@ export default function Home() {
         </section>
 
         <section id="darshan" className="border-y border-[var(--border)] bg-[var(--surface-warm)] px-5 py-24 lg:px-10 lg:py-32">
-          <div className="mx-auto max-w-7xl">
+          <div className="content-container">
             <SectionHeading lang={lang} eyebrow={lang === "mr" ? "भक्तांसाठी माहिती" : "For visitors"} title={lang === "mr" ? "दर्शन, पूजा आणि आरती" : "Darshan, puja & aarti"} copy={lang === "mr" ? "भक्तांनी दर्शनासाठी येण्यापूर्वी वेळा व उपलब्ध सेवांबाबत मंदिराशी संपर्क साधावा." : "Visitors are encouraged to contact the temple in advance about timings and available services."} />
             <div className="grid gap-5 lg:grid-cols-3">
               <div className="rounded-3xl bg-[var(--primary-dark)] p-7 text-[var(--cream-white)] shadow-xl shadow-[var(--primary-dark)]/15 lg:col-span-1">
@@ -436,9 +451,9 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="utsav" className="mx-auto max-w-7xl px-5 py-24 lg:px-10 lg:py-32">
+        <section id="utsav" className="temple-highlight-section content-container px-5 py-24 lg:px-10 lg:py-32">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
-            <div className="order-2 lg:order-1">
+            <div className="temple-highlight-copy order-2 lg:order-1">
               <SectionHeading lang={lang} eyebrow={lang === "mr" ? "सेवा आणि निर्मिती" : "Service & creation"} title={lang === "mr" ? "नवीन मंदिर — भक्तीला नवे घर" : "A new temple for a living tradition"} copy={lang === "mr" ? "देवस्थानच्या नवीन बांधकामाचा हा संकल्प भाविकांच्या सहकार्याने आकार घेत आहे. सेवा, साधना आणि समुदायासाठी अधिक सुंदर जागा उभी करण्याचे हे स्वप्न आहे." : "The new temple construction is taking shape with the support of devotees — a vision for a more beautiful space for service, prayer and community."} />
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl bg-[var(--surface-soft)] p-5"><WalletCards size={20} className="text-[var(--accent-dark)]" /><p className="mt-4 font-display text-xl text-[var(--primary-dark)]"><Bi lang={lang} mr="सहभाग" en="Participation" /></p><p className="mt-1 text-xs leading-6 text-[var(--muted-text)]"><Bi lang={lang} mr="भक्तांच्या सहकार्याने" en="With devotees' support" /></p></div>
@@ -447,7 +462,7 @@ export default function Home() {
               <a href="#donation" className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[var(--text-link)] hover:text-[var(--primary-dark)]"><Bi lang={lang} mr="बांधकामासाठी योगदान द्या" en="Support the construction" /><ChevronRight size={17} /></a>
             </div>
             <div className="order-1 lg:order-2">
-              <div className="relative overflow-hidden rounded-[2rem] border-8 border-[var(--surface-border)] bg-[var(--primary-dark)] shadow-[0_20px_70px_rgba(77,24,20,.18)]">
+              <div className="temple-highlight-image relative overflow-hidden rounded-[2rem] border-8 border-[var(--surface-border)] bg-[var(--primary-dark)] shadow-[0_20px_70px_rgba(77,24,20,.18)]">
                 <img src={images.construction} alt="नवीन बांधकामाचे 3D रेखाचित्र" className="aspect-[16/10] w-full object-cover" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--primary-deep)] to-transparent px-6 pb-6 pt-20 text-white"><p className="font-display text-2xl"><Bi lang={lang} mr="नवीन बांधकामाचे संकल्पचित्र" en="Vision for the new temple" /></p><p className="mt-1 text-xs text-white/65"><Bi lang={lang} mr="वास्तुविशारद अरविंद वैद्य आणि सहकारी" en="Architect Arvind Vaidya and associates" /></p></div>
               </div>
@@ -456,7 +471,7 @@ export default function Home() {
         </section>
 
         <section id="committee" className="border-y border-[var(--border)] bg-[var(--surface)] px-5 py-24 lg:px-10 lg:py-32">
-          <div className="mx-auto max-w-7xl">
+          <div className="content-container">
             <SectionHeading
               lang={lang}
               eyebrow={lang === "mr" ? "देवस्थान व्यवस्थापन" : "Temple administration"}
@@ -487,7 +502,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="fair" className="mx-auto max-w-7xl px-5 py-24 lg:px-10 lg:py-32">
+        <section id="fair" className="content-container px-5 py-24 lg:px-10 lg:py-32">
           <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
             <div>
               <SectionHeading
@@ -542,7 +557,7 @@ export default function Home() {
         </section>
 
         <section id="gallery" className="border-y border-[var(--border)] bg-[var(--primary-dark)] px-5 py-24 text-[#fff4d9] lg:px-10 lg:py-32">
-          <div className="mx-auto max-w-7xl">
+          <div className="content-container">
             <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
               <SectionHeading lang={lang} eyebrow={lang === "mr" ? "देवस्थानाचे क्षण" : "Moments from the shrine"} title={lang === "mr" ? "छायाचित्रातून अनुभव" : "See the sacred moments"} copy={lang === "mr" ? "दर्शन, सेवा आणि भक्तीचे काही निवडक क्षण." : "A few selected moments of darshan, seva and devotion."} />
               <Pill tone="dark"><Sparkles size={13} /><Bi lang={lang} mr="फोटोवर क्लिक करून मोठे पहा" en="Click a photo to enlarge" /></Pill>
@@ -559,7 +574,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="donation" className="mx-auto max-w-7xl px-5 py-24 lg:px-10 lg:py-32">
+        <section id="donation" className="content-container px-5 py-24 lg:px-10 lg:py-32">
           <div className="grid items-center gap-10 lg:grid-cols-[.75fr_1.25fr]">
             <div className="mx-auto w-full max-w-[270px] rounded-[2rem] border-8 border-[var(--surface-border)] bg-white p-3 shadow-[0_18px_60px_rgba(77,24,20,.13)]"><img src={images.qr} alt="देणगीसाठी QR कोड" className="w-full rounded-2xl" /><p className="px-2 pb-2 pt-3 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#9c6a29]"><Bi lang={lang} mr="देणगी QR" en="Donation QR" /></p></div>
             <div>
@@ -593,7 +608,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="enquiry" className="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+        <section id="enquiry" className="content-container px-5 py-20 lg:px-10 lg:py-28">
           <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
             <SectionHeading lang={lang} eyebrow={lang === "mr" ? "सेवा व संपर्क" : "Seva & contact"} title={lang === "mr" ? "आपली विनंती पाठवा" : "Send an enquiry"} copy={lang === "mr" ? "निवास, भोजन, पूजा, सेवा सहभाग किंवा कमिटीशी संपर्कासाठी माहिती पाठवा." : "Request accommodation, meals, puja booking, seva participation or committee contact."} />
             <form onSubmit={submitEnquiry} className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_14px_50px_rgba(77,24,20,.06)] md:p-8">
