@@ -53,6 +53,8 @@ const navItems = [
   { id: "story", mr: "इतिहास", en: "Story" },
   { id: "darshan", mr: "दर्शन व पूजा", en: "Darshan" },
   { id: "utsav", mr: "उत्सव", en: "Festivals" },
+  { id: "committee", mr: "कमिटी", en: "Committee" },
+  { id: "fair", mr: "यात्रा / जत्रा", en: "Fair" },
   { id: "gallery", mr: "छायाचित्र", en: "Gallery" },
   { id: "donation", mr: "देणगी", en: "Donate" },
   { id: "reach", mr: "कसे पोहोचाल", en: "Reach us" },
@@ -326,6 +328,67 @@ export default function Home() {
                 <img src={images.construction} alt="नवीन बांधकामाचे 3D रेखाचित्र" className="aspect-[16/10] w-full object-cover" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2d0c0b] to-transparent px-6 pb-6 pt-20 text-white"><p className="font-display text-2xl"><Bi lang={lang} mr="नवीन बांधकामाचे संकल्पचित्र" en="Vision for the new temple" /></p><p className="mt-1 text-xs text-white/65"><Bi lang={lang} mr="वास्तुविशारद अरविंद वैद्य आणि सहकारी" en="Architect Arvind Vaidya and associates" /></p></div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="committee" className="border-y border-[#ead9b8] bg-[#fffdf8] px-5 py-24 lg:px-10 lg:py-32">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeading
+              lang={lang}
+              eyebrow={lang === "mr" ? "देवस्थान व्यवस्थापन" : "Temple administration"}
+              title={lang === "mr" ? "देवस्थान कमिटी" : "Temple committee"}
+              copy={lang === "mr" ? "देवस्थानची सेवा, व्यवस्था, स्वच्छता, उत्सव आणि भाविकांच्या सुविधा यासाठी कमिटी कार्यरत आहे." : "The temple committee helps coordinate seva, facilities, cleanliness, festivals and the experience of devotees."}
+            />
+            <div className="grid gap-5 md:grid-cols-3">
+              {[
+                { icon: <Users size={21} />, mr: "व्यवस्थापन व सेवा", en: "Management & seva", copyMr: "दैनंदिन पूजा, आरती आणि देवस्थानची व्यवस्था पाहणे.", copyEn: "Coordinating daily puja, aarti and temple operations." },
+                { icon: <Heart size={21} />, mr: "भाविक सुविधा", en: "Devotee facilities", copyMr: "निवास, भोजन, स्वच्छता आणि भाविकांच्या सोयींची काळजी.", copyEn: "Caring for accommodation, meals, cleanliness and visitor facilities." },
+                { icon: <WalletCards size={21} />, mr: "देणगी व बांधकाम", en: "Donations & construction", copyMr: "देणगीचा उपयोग सेवा आणि नवीन मंदिर बांधकामासाठी करणे.", copyEn: "Directing contributions toward seva and the new temple construction." },
+              ].map((item) => (
+                <article key={item.en} className="rounded-3xl border border-[#ead9b8] bg-[#f8efdf] p-7 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(77,24,20,.08)]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#4d1814] text-[#e7c47f]">{item.icon}</span>
+                  <h3 className="mt-6 font-display text-2xl text-[#4d1814]"><Bi lang={lang} mr={item.mr} en={item.en} /></h3>
+                  <p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr={item.copyMr} en={item.copyEn} /></p>
+                </article>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-dashed border-[#d6b36e] bg-[#fdf5e7] p-5 text-sm text-[#76563f] sm:flex-row sm:items-center sm:justify-between">
+              <span><Bi lang={lang} mr="कमिटीशी संपर्क किंवा सेवा सहभागासाठी मंदिराशी आधी संपर्क साधावा." en="Please contact the temple in advance for committee enquiries or seva participation." /></span>
+              <a href="tel:9775757375" className="inline-flex shrink-0 items-center gap-2 font-bold text-[#8e511c]"><Phone size={16} /> 9775757375</a>
+            </div>
+          </div>
+        </section>
+
+        <section id="fair" className="mx-auto max-w-7xl px-5 py-24 lg:px-10 lg:py-32">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+              <SectionHeading
+                lang={lang}
+                eyebrow={lang === "mr" ? "उत्सव आणि परंपरा" : "Festivals & tradition"}
+                title={lang === "mr" ? "देवस्थानची यात्रा / जत्रा" : "Temple fair & annual utsav"}
+                copy={lang === "mr" ? "जत्रा, विशेष पूजा आणि उत्सव हे देवस्थानच्या सामुदायिक भक्तीचे महत्त्वाचे क्षण आहेत. निश्चित तारखा दरवर्षी कमिटीमार्फत जाहीर केल्या जातील." : "The fair, special puja and annual utsav are important moments of collective devotion. Confirmed dates will be announced by the committee each year."}
+              />
+              <div className="rounded-3xl bg-[#4d1814] p-7 text-[#fff3d5] shadow-xl shadow-[#4d1814]/15">
+                <CalendarDays size={24} className="text-[#e2b967]" />
+                <h3 className="mt-6 font-display text-2xl"><Bi lang={lang} mr="तारीख व वेळ लवकरच" en="Dates & timings coming soon" /></h3>
+                <p className="mt-3 text-sm leading-7 text-[#f8e7be]/70"><Bi lang={lang} mr="यात्रेपूर्वी दर्शन, वाहतूक, महाप्रसाद आणि निवास व्यवस्थेबाबत अधिकृत संपर्कावरून माहिती घ्यावी." en="Before travelling, please confirm darshan, transport, mahaprasad and accommodation arrangements through the official contact." /></p>
+                <a href="tel:9775757375" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#d7a84c] px-4 py-2.5 text-sm font-bold text-[#4d1814]"><Phone size={15} /> <Bi lang={lang} mr="अधिक माहिती" en="Get details" /></a>
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { number: "01", titleMr: "गुरुवार विशेष दर्शन", titleEn: "Thursday special darshan", bodyMr: "दर गुरुवारी भक्तिभावाने विशेष दर्शन व सेवा.", bodyEn: "Special darshan and seva every Thursday.", icon: <Sparkles size={19} /> },
+                { number: "02", titleMr: "वार्षिक यात्रा / जत्रा", titleEn: "Annual fair", bodyMr: "भक्तांचा सहभाग, पूजा, प्रसाद आणि सामुदायिक सेवा.", bodyEn: "Devotion, puja, prasad and community service.", icon: <Users size={19} /> },
+                { number: "03", titleMr: "विशेष पूजा व अभिषेक", titleEn: "Special puja & abhishek", bodyMr: "उत्सवाच्या काळात नियोजित विशेष धार्मिक कार्यक्रम.", bodyEn: "Special religious programmes during the festival period.", icon: <Heart size={19} /> },
+                { number: "04", titleMr: "महाप्रसाद सेवा", titleEn: "Mahaprasad seva", bodyMr: "भाविकांसाठी प्रसाद व भोजन व्यवस्थेची सेवा.", bodyEn: "Prasad and meal service for devotees.", icon: <Utensils size={19} /> },
+              ].map((item) => (
+                <article key={item.number} className="rounded-3xl border border-[#ead9b8] bg-[#f8efdf] p-6 transition hover:-translate-y-1 hover:bg-[#f3e4c5]">
+                  <div className="flex items-center justify-between text-[#a56e1f]"><span className="text-xs font-bold tracking-[0.18em]">{item.number}</span>{item.icon}</div>
+                  <h3 className="mt-8 font-display text-xl leading-snug text-[#4d1814]"><Bi lang={lang} mr={item.titleMr} en={item.titleEn} /></h3>
+                  <p className="mt-3 text-sm leading-7 text-[#6f5444]"><Bi lang={lang} mr={item.bodyMr} en={item.bodyEn} /></p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
