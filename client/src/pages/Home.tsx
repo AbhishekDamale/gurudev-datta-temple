@@ -115,6 +115,7 @@ function Pill({ children, tone = "light" }: { children: React.ReactNode; tone?: 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("mr");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuRendered, setMenuRendered] = useState(false);
   const [lightbox, setLightbox] = useState<(typeof galleryItems)[number] | null>(null);
   const [copied, setCopied] = useState(false);
   const [showTop, setShowTop] = useState(false);
@@ -134,8 +135,20 @@ export default function Home() {
   }, [lang]);
 
   useEffect(() => {
+    if (menuOpen) {
+      setMenuRendered(true);
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+    document.body.style.overflow = "";
+    const timer = window.setTimeout(() => setMenuRendered(false), 380);
+    return () => window.clearTimeout(timer);
+  }, [menuOpen]);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setLightbox(null);
+      if (event.key === "Escape") setMenuOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -198,23 +211,31 @@ export default function Home() {
             <a href="#donation" className="hidden rounded-full bg-[#d7a84c] px-4 py-2.5 text-xs font-bold text-[#4d1814] shadow-lg shadow-[#2b0b0a]/20 transition hover:-translate-y-0.5 hover:bg-[#e7c47f] sm:inline-flex">
               <Bi lang={lang} mr="देणगी द्या" en="Donate" />
             </a>
-            <button onClick={() => setMenuOpen((open) => !open)} className="rounded-full border border-[#d9b775]/40 p-2.5 text-[#f6e2b0] lg:hidden" aria-label="Open navigation" aria-expanded={menuOpen}>
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            <button onClick={() => setMenuOpen((open) => !open)} className="mobile-menu-toggle rounded-full border border-[#d9b775]/40 p-2.5 text-[#f6e2b0] lg:hidden" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="mobile-navigation-drawer">
+              <span className={`mobile-menu-icon ${menuOpen ? "is-open" : ""}`}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</span>
             </button>
           </div>
         </div>
 
-        {menuOpen ? (
-          <nav className="border-t border-white/10 bg-[#3d120f] px-5 py-4 lg:hidden" aria-label="Mobile navigation">
-            <div className="grid gap-1">
+        {menuRendered ? (
+          <div className={`mobile-menu-layer ${menuOpen ? "is-open" : "is-closing"}`} onClick={() => setMenuOpen(false)}>
+            <div id="mobile-navigation-drawer" className="mobile-menu-drawer" onClick={(event) => event.stopPropagation()}>
+              <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+                <div><p className="font-display text-xl text-[#ffe3a3]"><Bi lang={lang} mr="मंदिर मेनू" en="Temple menu" /></p><p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-[#d7b979]">Shingave Keshav</p></div>
+                <button onClick={() => setMenuOpen(false)} className="rounded-full border border-white/15 p-2 text-[#f6e2b0]" aria-label="Close navigation"><X size={19} /></button>
+              </div>
+              <nav aria-label="Mobile navigation">
+                <div className="grid gap-1">
               {navItems.map((item) => (
-                <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-[#f6e2b0] hover:bg-white/10">
+                <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)} className="mobile-menu-item rounded-xl px-3 py-3 text-base font-semibold text-[#f6e2b0] hover:bg-white/10">
                   <Bi lang={lang} mr={item.mr} en={item.en} />
                 </a>
               ))}
-              <button onClick={toggleLang} className="mt-2 flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-left text-sm text-[#f6e2b0]"><Languages size={16} /><Bi lang={lang} mr="English मध्ये पहा" en="मराठीत पहा" /></button>
+                  <button onClick={toggleLang} className="mobile-menu-item mt-3 flex items-center gap-2 rounded-xl border border-white/15 px-3 py-3 text-left text-base font-semibold text-[#f6e2b0]"><Languages size={17} /><Bi lang={lang} mr="English मध्ये पहा" en="मराठीत पहा" /></button>
+                </div>
+              </nav>
             </div>
-          </nav>
+          </div>
         ) : null}
 
         <div id="top" className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-16 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-28 lg:pt-20">
