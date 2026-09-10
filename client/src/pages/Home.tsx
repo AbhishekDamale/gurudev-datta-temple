@@ -498,6 +498,14 @@ export default function Home() {
         <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-3 border-t border-white/10 pt-6 text-xs text-[#f8e7be]/40 sm:flex-row sm:items-center sm:justify-between"><span>© {new Date().getFullYear()} <Bi lang={lang} mr="श्री गुरुदेव दत्त देवस्थान" en="Shri Gurudev Datta Devasthan" /></span><span className="font-display text-base text-[#d7a84c]">ॐ · <Bi lang={lang} mr="राम कृष्ण हरी" en="Ram Krishna Hari" /></span></div>
       </footer>
 
+      <nav className="mobile-bottom-nav" aria-label="Mobile quick navigation">
+        <a href="#top"><Sparkles size={18} /><span><Bi lang={lang} mr="मुख्य" en="Home" /></span></a>
+        <a href="#darshan"><Clock3 size={18} /><span><Bi lang={lang} mr="दर्शन" en="Darshan" /></span></a>
+        <a href="#fair"><CalendarDays size={18} /><span><Bi lang={lang} mr="यात्रा" en="Fair" /></span></a>
+        <a href="#donation"><WalletCards size={18} /><span><Bi lang={lang} mr="देणगी" en="Donate" /></span></a>
+        <a href="#reach"><MapPin size={18} /><span><Bi lang={lang} mr="मार्ग" en="Reach" /></span></a>
+      </nav>
+
       <a href="https://wa.me/919775757375" target="_blank" rel="noreferrer" className="fixed bottom-5 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-xl shadow-[#0c3e1f]/20 transition hover:-translate-y-1 hover:bg-[#1fbc5a]" aria-label="WhatsApp">
         <MessageCircle size={26} />
       </a>
