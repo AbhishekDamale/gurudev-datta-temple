@@ -135,6 +135,7 @@ export default function Home() {
   const [enquirySent, setEnquirySent] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
+  const [thursdaysOpen, setThursdaysOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("story");
   const navRef = useRef<HTMLElement | null>(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
@@ -545,16 +546,23 @@ export default function Home() {
               </div>
               <Pill><CalendarDays size={13} /> 2026</Pill>
             </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {upcomingEvents.map((event) => {
-                const fair = event.type === "fair";
-                return <div key={event.date} className={`rounded-2xl border p-4 ${fair ? "border-[var(--accent-border)] bg-[var(--primary-dark)] text-[var(--cream-strong)] shadow-lg shadow-[var(--primary-dark)]/10 sm:col-span-2 lg:col-span-2" : "border-[var(--border)] bg-[var(--surface-warm)] text-[var(--primary-dark)]"}`}>
-                  <div className="flex items-center justify-between gap-3"><span className={`text-[11px] font-bold uppercase tracking-[0.16em] ${fair ? "text-[var(--gold-soft)]" : "text-[var(--accent-dark)]"}`}><Bi lang={lang} mr={fair ? "विशेष यात्रा" : "गुरुवार"} en={fair ? "Annual yatra" : "Thursday"} /></span>{fair ? <Sparkles size={16} className="text-[var(--gold-soft)]" /> : <Clock3 size={15} className="text-[var(--accent-dark)]" />}</div>
-                  <p className={`mt-3 font-display text-xl ${fair ? "text-[var(--cream-strong)]" : "text-[var(--primary-dark)]"}`}>{formatEventDate(event.date, lang)}</p>
-                  <p className={`mt-1 text-xs leading-5 ${fair ? "text-[var(--cream-muted)]/75" : "text-[var(--muted-text)]"}`}><Bi lang={lang} mr={fair ? "वार्षिक यात्रा / जत्रा · बुधवार" : "विशेष दर्शन व सेवा"} en={fair ? "Annual fair · Wednesday" : "Special darshan & seva"} /></p>
-                  <div className="mt-3 flex flex-wrap gap-2"><button onClick={() => addToCalendar(event)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold ${fair ? "bg-[var(--accent)] text-[var(--primary-dark)]" : "bg-[var(--surface)] text-[var(--text-link)]"}`}><CalendarPlus size={13} /><Bi lang={lang} mr="कॅलेंडर" en="Calendar" /></button>{fair ? <button onClick={() => setYatraOpen(true)} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--gold-soft)]/40 px-3 py-1.5 text-[11px] font-bold text-[var(--cream-strong)]"><ArrowUpRight size={13} /><Bi lang={lang} mr="माहिती" en="Details" /></button> : null}</div>
-                </div>;
-              })}
+            <button type="button" onClick={() => setThursdaysOpen((open) => !open)} className="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl border border-[var(--accent-border)]/45 bg-[var(--surface-warm-light)] px-5 py-4 text-left transition hover:bg-[var(--surface-rose)]" aria-expanded={thursdaysOpen} aria-controls="upcoming-thursdays-list">
+              <span><span className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-dark)]"><Clock3 size={16} /><Bi lang={lang} mr="आगामी गुरुवार" en="Upcoming Thursdays" /></span><span className="mt-1 block text-sm font-semibold text-[var(--primary-dark)]"><Bi lang={lang} mr={`${upcomingEvents.filter((event) => event.type === "thursday").length} विशेष दर्शनाच्या तारखा`} en={`${upcomingEvents.filter((event) => event.type === "thursday").length} special darshan dates`} /></span></span>
+              <ChevronDown size={19} className={`shrink-0 text-[var(--accent-dark)] transition-transform ${thursdaysOpen ? "rotate-180" : ""}`} />
+            </button>
+            {thursdaysOpen ? <div id="upcoming-thursdays-list" className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {upcomingEvents.filter((event) => event.type === "thursday").map((event) => <div key={event.date} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-warm)] p-4 text-[var(--primary-dark)]">
+                <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--accent-dark)]"><Bi lang={lang} mr="गुरुवार" en="Thursday" /></span><Clock3 size={15} className="text-[var(--accent-dark)]" /></div>
+                <p className="mt-3 font-display text-xl text-[var(--primary-dark)]">{formatEventDate(event.date, lang)}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--muted-text)]"><Bi lang={lang} mr="विशेष दर्शन व सेवा" en="Special darshan & seva" /></p>
+                <button onClick={() => addToCalendar(event)} className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1.5 text-[11px] font-bold text-[var(--text-link)]"><CalendarPlus size={13} /><Bi lang={lang} mr="कॅलेंडर" en="Calendar" /></button>
+              </div>)}
+            </div> : null}
+            <div className="mt-4 rounded-2xl border border-[var(--accent-border)] bg-[var(--primary-dark)] p-5 text-[var(--cream-strong)] shadow-lg shadow-[var(--primary-dark)]/10">
+              <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--gold-soft)]"><Bi lang={lang} mr="विशेष यात्रा" en="Annual yatra" /></span><Sparkles size={16} className="text-[var(--gold-soft)]" /></div>
+              <p className="mt-3 font-display text-xl">{formatEventDate("2026-12-23", lang)}</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--cream-muted)]/75"><Bi lang={lang} mr="वार्षिक यात्रा / जत्रा · बुधवार" en="Annual fair · Wednesday" /></p>
+              <div className="mt-3 flex flex-wrap gap-2"><button onClick={() => addToCalendar({ date: "2026-12-23", type: "fair" })} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-3 py-1.5 text-[11px] font-bold text-[var(--primary-dark)]"><CalendarPlus size={13} /><Bi lang={lang} mr="कॅलेंडर" en="Calendar" /></button><button onClick={() => setYatraOpen(true)} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--gold-soft)]/40 px-3 py-1.5 text-[11px] font-bold text-[var(--cream-strong)]"><ArrowUpRight size={13} /><Bi lang={lang} mr="माहिती" en="Details" /></button></div>
             </div>
             <p className="mt-5 text-xs leading-6 text-[var(--muted-text)]"><Bi lang={lang} mr="यात्रेची वेळ, मिरवणूक, महाप्रसाद आणि निवास व्यवस्थेबाबत अंतिम माहिती कमिटीमार्फत जाहीर केली जाईल." en="Final timings, procession, mahaprasad and accommodation details for the yatra will be announced by the committee." /></p>
           </div>
