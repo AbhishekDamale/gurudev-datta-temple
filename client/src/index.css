@@ -159,6 +159,12 @@ input, select, textarea { min-height: 48px; }
 .hero-copy > .hero-reveal:nth-of-type(4) { animation-delay: 320ms; }
 .hero-actions { animation-delay: 400ms; }
 .hero-image-wrap { opacity: 0; animation: hero-image-in 760ms cubic-bezier(.23, 1, .32, 1) 180ms forwards; }
+.hero-slider-viewport { overflow: hidden; touch-action: pan-y; }
+.hero-slider-track { display: flex; height: 100%; width: 200%; transition: transform 720ms cubic-bezier(.23, 1, .32, 1); will-change: transform; }
+.hero-slide { width: 50%; height: 100%; flex: 0 0 50%; }
+.hero-slide img { display: block; }
+.hero-slide-dot { width: 7px; height: 7px; border-radius: 999px; background: rgba(255, 240, 200, .5); transition: width 220ms ease-out, background-color 220ms ease-out; }
+.hero-slide-dot.is-active { width: 22px; background: var(--accent-light); }
 @keyframes hero-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes hero-image-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
@@ -275,7 +281,7 @@ input, select, textarea { min-height: 48px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mobile-menu-layer, .mobile-menu-drawer, .mobile-menu-icon, .hero-deity-card, .temple-navbar, .nav-active-indicator { transition: none; animation: none; }
+  .mobile-menu-layer, .mobile-menu-drawer, .mobile-menu-icon, .hero-deity-card, .temple-navbar, .nav-active-indicator, .hero-slider-track, .hero-slide-dot { transition: none; animation: none; }
   .hero-reveal, .hero-image-wrap { opacity: 1; animation: none; }
   .reveal-ready { opacity: 1; transform: none; transition: none; }
   .mobile-menu-layer.is-open .mobile-menu-item { animation: none; opacity: 1; transform: none; }

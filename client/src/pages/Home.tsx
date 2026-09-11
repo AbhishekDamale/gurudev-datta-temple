@@ -56,6 +56,11 @@ const images = {
   qr: "/manus-storage/image-7_5f57937e.jpg",
 };
 
+const heroSlides = [
+  { src: images.sanctum, alt: "स्वयंभू श्री गुरुदेव दत्त मूर्ती", labelMr: "दर्शनाने मनःशांती", labelEn: "A moment of inner peace" },
+  { src: "/manus-storage/pasted_file_zlkCQH_WhatsAppImage2026-09-11at07.20.40_cdfc3e4e.jpeg", alt: "फुलांनी सजलेले स्वयंभू श्री गुरुदेव दत्त", labelMr: "फुलांनी सजलेले मंगल दर्शन", labelEn: "A flower-adorned sacred darshan" },
+];
+
 const navItems = [
   { id: "story", mr: "इतिहास", en: "Story" },
   { id: "darshan", mr: "दर्शन व पूजा", en: "Darshan" },
@@ -132,6 +137,7 @@ export default function Home() {
   const [yatraOpen, setYatraOpen] = useState(false);
   const [enquirySent, setEnquirySent] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [heroSlide, setHeroSlide] = useState(0);
   const [navScrolled, setNavScrolled] = useState(false);
   const [activeNav, setActiveNav] = useState("story");
   const navRef = useRef<HTMLElement | null>(null);
@@ -178,6 +184,12 @@ export default function Home() {
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.08 });
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setHeroSlide((value) => (value + 1) % heroSlides.length), 5200);
+    return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -352,11 +364,18 @@ export default function Home() {
 
           <div className="hero-image-wrap relative mx-auto w-full max-w-[520px] lg:justify-self-end">
             <div className="absolute -inset-5 rounded-[2rem] border border-[var(--gold-border)]/20 bg-[var(--accent)]/10 blur-sm" />
-            <div className="hero-deity-card relative overflow-hidden rounded-[1.8rem] border border-[#e4c47e]/35 bg-[var(--primary-deep)] p-2 shadow-2xl shadow-[var(--primary-deep)]/40">
-              <img src={images.sanctum} alt="स्वयंभू श्री गुरुदेव दत्त मूर्ती" className="aspect-[4/5] w-full rounded-[1.35rem] object-cover object-center" />
+            <div className="hero-deity-card relative overflow-hidden rounded-[1.8rem] border border-[#e4c47e]/35 bg-[var(--primary-deep)] p-2 shadow-2xl shadow-[var(--primary-deep)]/40" aria-label="Temple image gallery">
+              <div className="hero-slider-viewport aspect-[4/5] w-full rounded-[1.35rem]" aria-live="polite">
+                <div className="hero-slider-track" style={{ transform: `translateX(-${heroSlide * 50}%)` }}>
+                  {heroSlides.map((slide) => <div className="hero-slide" key={slide.src}><img src={slide.src} alt={slide.alt} className="h-full w-full object-cover object-center" /></div>)}
+                </div>
+              </div>
               <div className="absolute inset-x-8 bottom-8 rounded-2xl border border-white/20 bg-[#3e1712]/70 p-4 backdrop-blur-md">
-                <p className="font-display text-xl text-[#ffe6a9]"><Bi lang={lang} mr="दर्शनाने मनःशांती" en="A moment of inner peace" /></p>
+                <p className="font-display text-xl text-[#ffe6a9]"><Bi lang={lang} mr={heroSlides[heroSlide].labelMr} en={heroSlides[heroSlide].labelEn} /></p>
                 <p className="mt-1 text-xs text-[#f9e7bd]/70"><Bi lang={lang} mr="श्रद्धा · सेवा · समाधान" en="Faith · service · serenity" /></p>
+              </div>
+              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5" role="tablist" aria-label="Hero images">
+                {heroSlides.map((slide, index) => <button key={slide.src} type="button" onClick={() => setHeroSlide(index)} className={`hero-slide-dot ${heroSlide === index ? "is-active" : ""}`} role="tab" aria-selected={heroSlide === index} aria-label={`Show temple image ${index + 1}`} />)}
               </div>
             </div>
             <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-[var(--accent)]/30 bg-[var(--cream)] px-5 py-4 text-[var(--primary-dark)] shadow-xl sm:block">
